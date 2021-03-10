@@ -1,4 +1,4 @@
-var debug = true;
+var debug = false;
 
 console.log("Webex meeting notifier is loading up...");
 var begin = true;
@@ -61,10 +61,11 @@ function check() {
 				return notify(); //stops loop and notifies
 			} else {
 				msg("Still waiting");
+				console.log(".");
 			}
 		}
 	}
-	sleepTime=5000;
+	sleepTime=30000;
 	msg("Sleeping for "+String(sleepTime))
 	setTimeout(function(){ check(); }, sleepTime);
 }
