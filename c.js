@@ -1,6 +1,9 @@
 var debug = false;
 
 console.log("Webex meeting notifier is loading up...");
+const dateObject = new Date()
+console.log(dateObject.toLocaleString());
+
 var begin = true;
 
 function notify(){
@@ -33,14 +36,17 @@ function msg(output){
 	}
 }
 function check() {
+	
 	var iframe = document.getElementById("pbui_iframe");
 	if (iframe != null){
 		if (begin) {
-			var b = iframe.contentWindow.document.getElementById("interstitial_join_btn");
-			msg(b);
-			if (b != null){
+			var nextBtn = iframe.contentWindow.document.getElementById("guest_next-btn");
+			if (nextBtn != null) {nextBtn.click();}
+			var b2 = iframe.contentWindow.document.getElementById("interstitial_join_btn");
+			msg(b2);
+			if (b2 != null){
 				msg("Found join btn, clicking");
-				b.click();
+				b2.click();
 				begin = false;
 			} else {
 				msg("No join btn");
@@ -64,10 +70,19 @@ function check() {
 				console.log(".");
 			}
 		}
+	} else {
+		var b1 = document.getElementById("push_download_join_by_browser");
+		if (b1 != null){b1.click(); msg("join1");}
 	}
 	sleepTime=30000;
 	msg("Sleeping for "+String(sleepTime))
 	setTimeout(function(){ check(); }, sleepTime);
 }
 
+var url = window.location.href.split("/");
+msg(url);
+if (url[url.length-1] == "dashboard") {
+	msg("timed out. go back");
+	window.history.back();
+}
 check();
