@@ -36,7 +36,10 @@ function msg(output){
 	}
 }
 function check() {
-	
+	var dashJoin = document.getElementById("smartJoinButton-trigger");
+	if (dashJoin != null){
+		dashJoin.childNodes[0].childNodes[0].click();
+	}
 	var iframe = document.getElementById("pbui_iframe");
 	if (iframe != null){
 		if (begin) {
