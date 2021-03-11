@@ -1,4 +1,9 @@
+/*
+Set these params
+*/
 var debug = false;
+var notifyUrl = "https://stockscores.net/notify.php?open";
+var sleepTime = 30000;
 
 console.log("Webex meeting notifier is loading up...");
 const dateObject = new Date()
@@ -6,8 +11,8 @@ console.log(dateObject.toLocaleString());
 
 var begin = true;
 
-function notify(){
-	var url_string = "https://stockscores.net/notify.php?open"
+function notify(){ //Called when meeting starts
+	var url_string = notifyUrl;
 
 	function makeHttpObject() {
 	  try {return new XMLHttpRequest();}
@@ -29,20 +34,22 @@ function notify(){
 	alert("Open");
 }
 
-
-function msg(output){
+function msg(output){ //Wrapped log() for debugging 
 	if (debug){
 		console.log(output);
 	}
 }
-function check() {
+
+function check() { //main function, enters waiting room
+	// check for special time out case
 	var dashJoin = document.getElementById("smartJoinButton-trigger");
 	if (dashJoin != null){
 		dashJoin.childNodes[0].childNodes[0].click();
 	}
+
 	var iframe = document.getElementById("pbui_iframe");
 	if (iframe != null){
-		if (begin) {
+		if (begin) { //click through webex screens
 			var nextBtn = iframe.contentWindow.document.getElementById("guest_next-btn");
 			if (nextBtn != null) {nextBtn.click();}
 			var b2 = iframe.contentWindow.document.getElementById("interstitial_join_btn");
@@ -55,17 +62,17 @@ function check() {
 				msg("No join btn");
 			}
 		
-		} else {
+		} else { // Already in the room, wait for host to enter
 			var btns = iframe.contentWindow.document.getElementsByTagName("button");
 			msg(btns);
 			var waiting = false;
-			for (var i=0;i<btns.length;i++) {
+			for (var i=0;i<btns.length;i++) { // look for notify host button
 				msg(btns[i].innerHTML);
 				if (btns[i].innerHTML == "Notify host"){
 					waiting = true;
 				}
 			}
-			if (!waiting){
+			if (!waiting){ // when is missing, assume meeting started
 				msg("Notify host button not there, assume meeting started.");
 				return notify(); //stops loop and notifies
 			} else {
@@ -73,19 +80,23 @@ function check() {
 				console.log(".");
 			}
 		}
-	} else {
+	} else { // iframe isn't present, look for join link
 		var b1 = document.getElementById("push_download_join_by_browser");
 		if (b1 != null){b1.click(); msg("join1");}
 	}
-	sleepTime=30000;
+
+	// call self after sleep
 	msg("Sleeping for "+String(sleepTime))
 	setTimeout(function(){ check(); }, sleepTime);
 }
 
+// check URL to see if timed out
 var url = window.location.href.split("/");
 msg(url);
 if (url[url.length-1] == "dashboard") {
 	msg("timed out. go back");
-	window.history.back();
+	window.history.back(); // rejoin meeting
 }
+
+// initiate check loop
 check();
