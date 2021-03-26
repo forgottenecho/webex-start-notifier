@@ -11,7 +11,8 @@ console.log(dateObject.toLocaleString());
 
 var begin = true;
 
-function notify(){ //Called when meeting starts
+// Called when meeting starts
+function notify(){
 	var url_string = notifyUrl;
 
 	function makeHttpObject() {
@@ -34,13 +35,15 @@ function notify(){ //Called when meeting starts
 	alert("Open");
 }
 
-function msg(output){ //Wrapped log() for debugging 
+// Wrapped log() for debugging
+function msg(output){
 	if (debug){
 		console.log(output);
 	}
 }
 
-function check() { //main function, enters waiting room
+// main function, enters waiting room
+function check() {
 	// check for special time out case
 	var dashJoin = document.getElementById("smartJoinButton-trigger");
 	if (dashJoin != null){
@@ -49,7 +52,8 @@ function check() { //main function, enters waiting room
 
 	var iframe = document.getElementById("pbui_iframe");
 	if (iframe != null){
-		if (begin) { //click through webex screens
+		// click through webex screens
+		if (begin) {
 			var nextBtn = iframe.contentWindow.document.getElementById("guest_next-btn");
 			if (nextBtn != null) {nextBtn.click();}
 			var b2 = iframe.contentWindow.document.getElementById("interstitial_join_btn");
@@ -62,17 +66,22 @@ function check() { //main function, enters waiting room
 				msg("No join btn");
 			}
 		
-		} else { // Already in the room, wait for host to enter
+		} else {
+			// Already in the room, wait for host to enter
 			var btns = iframe.contentWindow.document.getElementsByTagName("button");
 			msg(btns);
 			var waiting = false;
-			for (var i=0;i<btns.length;i++) { // look for notify host button
+			
+			// look for notify host button
+			for (var i=0;i<btns.length;i++) {
 				msg(btns[i].innerHTML);
 				if (btns[i].innerHTML == "Notify host"){
 					waiting = true;
 				}
 			}
-			if (!waiting){ // when is missing, assume meeting started
+			
+			// when is missing, assume meeting started
+			if (!waiting){
 				msg("Notify host button not there, assume meeting started.");
 				return notify(); //stops loop and notifies
 			} else {
